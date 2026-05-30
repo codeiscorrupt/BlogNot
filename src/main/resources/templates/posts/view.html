@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${post.title}">Post</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body class="container">
+
+<header>
+    <div class="header-left">
+        <a th:href="@{/posts}">Home</a>
+    </div>
+    <div class="header-right">
+        <div style="display: flex; align-items: center;">
+            <a th:href="@{/users/{id} (id = ${loggedInUser.getId()})}" style="display: flex; align-items: center;">
+                <img th:src="${loggedInUser.profile.avatar}" class="avatar-in-header" alt="flan's profile pic">
+            </a>
+            <a th:href="@{/users/{id} (id = ${loggedInUser.getId()})}" sec:authentication="name">Username</a>
+        </div>
+        | <a href="/logout"><button class="btn-logout"> Logout </button></a>
+    </div>
+</header>
+
+<br><br>
+<div class="post-view">
+    <div class="user-part-in-view-post-with-edit">
+        <div class="user-part-in-view-post">
+            <img th:src="${post.author.profile.avatar}" class="avatar-in-view-post" alt="flan's profile pic">
+            <a th:href="@{/users/{id} (id = ${post.author.id})}" th:text="${post.author.username}"></a>
+        </div>
+        <span style="padding-right: 10px;" th:if="${post.author.id == loggedInUser.id}">
+                <a th:href="@{/posts/{id}/edit(id=${post.id})}" >
+                    <img alt="edit" class="feed-button" src="\uploads\icons\edit.png">
+                </a>
+        </span>
+    </div>
+    <h1 th:text="${post.title}"></h1>
+    <p style="white-space: pre-wrap; text-align:justify; text-justify:inter-word; padding-right: 5px; padding-left: 5px;" th:text="${post.content}"></p>
+    <div class="feed-video" th:if="${post.getClass().getName() == 'com.example.blog.dao.entities.VideoPost'}">
+        <video controls>
+            <source th:src="@{${post.url}}">
+        </video>
+    </div>
+    <div class="tag-list-in-view-post">
+        <th:block th:each="tag : ${post.getTags()}">
+            <a th:href="@{/tags/{id} (id = ${tag.id})}" th:text="${tag.name}"></a>
+        </th:block>
+    </div>
+</div>
+<div class="TRC" >
+    <div style="display: flex; align-items: center; justify-content: space-between">
+        <div class="reacts">
+            <form th:action="@{/reacts}" method="post">
+                <div>
+                    <label>
+                        <input type="number" name="post_id" th:value="${post.getId()}" hidden />
+                    </label>
+                    <label>
+                        <input type="text" name="reactype" th:value="like" hidden />
+                    </label>
+                    <button class="react-button">
+                        <img class="feed-button" alt="like" src="\uploads\icons\like.png">
+                        <span th:text="|${post.getReactsByType('like').size()}|"></span>
+                    </button>
+                </div>
+            </form>
+
+            <form th:action="@{/reacts}" method="post">
+                <div>
+                    <label>
+                        <input type="number" name="post_id" th:value="${post.getId()}" hidden />
+                    </label>
+                    <label>
+                        <input type="text" name="reactype" th:value="love" hidden />
+                    </label>
+                    <button class="react-button">
+                        <img class="feed-button" alt="love" src="\uploads\icons\love.png">
+                        <span th:text="|${post.getReactsByType('love').size()}|"></span>
+                    </button>
+                </div>
+            </form>
+            <form th:action="@{/reacts}" method="post">
+                <div>
+                    <label>
+                        <input type="number" name="post_id" th:value="${post.getId()}" hidden />
+                    </label>
+                    <label>
+                        <input type="text" name="reactype" th:value="haha" hidden />
+                    </label>
+                    <button class="react-button">
+                        <img class="feed-button" alt="haha" src="\uploads\icons\haha.png">
+                        <span th:text="|${{post.getReactsByType('haha').size()}}|"></span>
+                    </button>
+                </div>
+            </form>
+            <form th:action="@{/reacts}" method="post">
+                <div>
+                    <label>
+                        <input type="number" name="post_id" th:value="${post.getId()}" hidden />
+                    </label>
+                    <label>
+                        <input type="text" name="reactype" th:value="wow" hidden />
+                    </label>
+                    <button class="react-button">
+                        <img class="feed-button" alt="wow" src="\uploads\icons\wow.png">
+                        <span th:text="|${post.getReactsByType('wow').size()}|"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div>
+            <span th:text="|${post.reacts.size()} reacts - ${post.comments.size()} comments |"></span>
+        </div>
+    </div>
+
+    <br>
+    <div>
+       Comments :
+    </div>
+    <form class="add-comment" th:action="@{/comment}" th:object="${comment}" method="post">
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+        <label style="width:85%; height: 50px" >
+            <input style="width:100%; height: 40px;" type="text" th:field="*{content}" required/>
+        </label>
+        <button class="green-button" style="height: 40px;" type="submit">Comment</button>
+
+        </div>
+        <label>
+            <input type="text" th:field="*{author}" hidden />
+        </label>
+        <label>
+            <input type="hidden" name="post_id" th:value="${post.id}"/>
+        </label>
+    </form>
+
+    <div class="comments-section">
+        <th:block th:each="comment : ${post.getComments()}">
+        <div class="comment-card">
+            <div class="user-part-in-comment-with-delete">
+                <div class="user-part-in-comment">
+                    <img th:src="${comment.author.profile.avatar}" class="avatar-in-comment" alt="flan's profile pic">
+                    <a th:href="@{/users/{id} (id = ${comment.author.id})}" th:text="${comment.author.username}"></a>
+                </div>
+                <span th:if="${comment.author.id == loggedInUser.id}">
+                        <a th:href="@{/comments/{id}/delete (id=${comment.id})}" >
+                            <img alt="edit" class="feed-button" src="\uploads\icons\delete.png">
+                        </a>
+                </span>
+            </div>
+            <div>
+                <p style="padding-right: 10px; padding-left: 10px; text-align:justify; text-justify:inter-word;" th:text="${comment.content}"></p>
+            </div>
+        </div>
+        </th:block>
+    </div>
+    <br><br><br>
+</div>
+</body>
+</html>

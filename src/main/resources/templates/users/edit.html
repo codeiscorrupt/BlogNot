@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head><meta charset="UTF-8"><title>Profile</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" /></head>
+<body class="container">
+
+<header>
+    <div class="header-left">
+        <a th:href="@{/posts}">Home</a>
+    </div>
+    <div class="header-right">
+        <div style="display: flex; align-items: center;">
+            <a th:href="@{/users/{id} (id = ${user.getId()})}" style="display: flex; align-items: center;">
+                <img th:src="${user.profile.avatar}" class="avatar-in-header" alt="flan's profile pic">
+            </a>
+            <a th:href="@{/users/{id} (id = ${user.getId()})}" sec:authentication="name">Username</a>
+        </div>
+        | <a href="/logout"><button class="btn-logout"> Logout </button></a>
+    </div>
+</header>
+<h1>Edit Your Profile</h1>
+<hr>
+
+<form th:action="${user.id != null} ? @{/users/{id}/edit(id=${user.id})} : @{/users}"
+      th:object="${user}"
+      enctype="multipart/form-data"
+      method="post">
+    <label>Avatar :
+        <input type="file" accept="image/*" name="avatar"/>
+    </label>
+    <img class="avatar" th:src="${user.profile.avatar}" alt="profile pic">
+    <br><br>
+
+    <label>Username : <input type="text" th:field="*{username}" required/></label><br><br>
+
+    <label>Email : <input type="text" th:field="*{email}" required/></label><br><br>
+
+    <label>Password :
+        <input type="password" th:field="*{password}"/>
+    </label>
+
+    <label>Bio :
+        <input type="text" name="bio" th:value="*{profile.getBio()}"/>
+    </label>
+    <br><br>
+    <div style="display:flex; justify-content: space-between; align-items: center ">
+        <button class="green-button" type="submit"> Save </button>
+        <a style="font-size: 20px" th:href="@{/users/{id} (id = ${user.getId()})}">Cancel</a>
+    </div>
+</form>
+<br><br>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head><meta charset="UTF-8"><title>Users</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" /></head>
+<body>
+
+<header th:fragment="header" class="main-header">
+    <nav>
+        <!-- Common Link: Always visible -->
+        <a th:href="@{/posts}">📝 Posts</a>
+
+        <!-- Visible only when logged in -->
+        <span sec:authorize="isAuthenticated()">
+                | <a th:href="@{/users}">👥 Users</a>
+                | <span sec:authentication="name">Username</span>
+                |
+                <form th:action="@{/logout}" method="post" style="display:inline;">
+                    <button type="submit" class="btn-logout">🔐 Logout</button>
+            </span>
+
+        <!-- Visible only when logged out -->
+        <span sec:authorize="!isAuthenticated()">
+                | <a th:href="@{/login}">🔑 Login</a>
+                | <a th:href="@{/register}">✍️ Register</a>
+            </span>
+    </nav>
+</header>
+
+<h1>&ensp;List Of Users</h1>
+<hr>
+<th:block th:each="user : ${users}">
+    <li>
+        <a th:href="@{/users/{id}(id=${user.id})}"
+           th:text="${user.username}"></a>
+        — <span th:text="${user.getPostsCount()}" ></span> Posts
+    </li>
+</th:block>
+
+<hr>
+</body>
+</html>

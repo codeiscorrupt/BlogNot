@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>User Profile</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" /></head>
+<body class="container">
+
+<header>
+    <div class="header-left">
+        <a th:href="@{/posts}">Welcome to BlogNot</a>
+    </div>
+    <div class="header-right">
+        <a href="/login"><button class="btn"> Login </button></a>
+    </div>
+</header>
+
+<h1 th:text="'Welcome aboard new user!'"></h1>
+
+<form th:action="@{/register}" th:object="${user}" method="post">
+
+
+
+    <label>Username :
+        <input type="text" th:field="*{username}" required/>
+    </label><br><br>
+
+    <label>Email :
+    <input type="email" th:field="*{email}" required/>
+    </label><br><br>
+
+    <label>Password :
+        <input type="password" th:field="*{password}" required/>
+    </label>
+
+    <br><br>
+    <div style="display:flex; justify-content: space-between; align-items: center ">
+    <button class="green-button" type="submit"> Save </button>
+    <a href="/users">Login Instead</a>
+    </div>
+</form>
+</body>
+</html>

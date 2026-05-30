@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head><meta charset="UTF-8"><title>Post</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" /></head>
+<body class="container">
+
+<header>
+    <div class="header-left">
+        <a th:href="@{/posts}">Home</a>
+    </div>
+    <div class="header-right">
+        <div style="display: flex; align-items: center;">
+            <a th:href="@{/users/{id} (id = ${loggedInUser.getId()})}" style="display: flex; align-items: center;">
+                <img th:src="${loggedInUser.profile.avatar}" class="avatar-in-header" alt="flan's profile pic">
+            </a>
+            <a th:href="@{/users/{id} (id = ${loggedInUser.getId()})}" sec:authentication="name">Username</a>
+        </div>
+        | <a href="/logout"><button class="btn-logout"> Logout </button></a>
+    </div>
+</header>
+
+<h1 th:text="${post.id} != null ? 'Edit Post' : 'New Post'"></h1>
+<form th:action="${post.id != null}
+                  ? @{/posts/{id}/edit(id=${post.id})}
+                  : @{/posts}"
+      th:object="${post}"
+      enctype="multipart/form-data"
+      method="post">
+
+    <label>Title :
+        <input type="text" th:field="*{title}" required/>
+    </label><br><br>
+
+    <label th:unless="${post.author == null}">
+        <input type="text" th:field="*{author}" hidden />
+    </label>
+
+    <label>Content :
+        <textarea th:field="*{content}" rows="8" cols="50"></textarea>
+    </label><br><br>
+
+    <label>Video (Optional) :
+        <input type="file" accept="video/*" name="bideo"/>
+    </label><br><br>
+    <div class="feed-video" th:if="${post.id != null} and ${post.getClass().getName() == 'com.example.blog.dao.entities.VideoPost'}">
+        <video controls>
+            <source th:src="@{${post.url}}">
+        </video>
+    </div><br>
+
+    <label>Tags : (Comma Separated)
+        <input type="text" name="tagz"/>
+    </label><br>
+    <div style="display: flex; justify-content: space-between; align-items: center">
+        <button class="green-button" type="submit">💾 Save</button>
+        <div>
+            <a class="btn-logout" th:if="${post.id != null}" th:href="@{/posts/{id}/delete(id=${post.id})}">Delete
+            </a>
+            <a th:href="@{/users/{id} (id = ${loggedInUser.getId()})}">Cancel</a>
+        </div>
+    </div>
+</form>
+<br><br>
+</body>
+</html>

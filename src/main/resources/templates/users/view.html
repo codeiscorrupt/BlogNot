@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${user.username}">Profile</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body class="container">
+
+<header>
+    <div class="header-left">
+        <a th:href="@{/posts}">Home</a>
+    </div>
+    <div class="header-right">
+        <div style="display: flex; align-items: center;">
+            <a th:href="@{/users/{id} (id = ${loggedInUser.getId()})}" style="display: flex; align-items: center;">
+                <img th:src="${loggedInUser.profile.avatar}" class="avatar-in-header" alt="flan's profile pic">
+            </a>
+            <a th:href="@{/users/{id} (id = ${loggedInUser.getId()})}" sec:authentication="name">Username</a>
+        </div>
+        | <a href="/logout"><button class="btn-logout"> Logout </button></a>
+    </div>
+</header>
+<br><br>
+<div style="display: flex; align-items: center; justify-content: center; gap: 20px;">
+    <img class="avatar" th:src="${user.profile.avatar}" alt="profile pic">
+    <h1 th:text="|${user.username} - ${user.getPostsCount()} Posts|"></h1>
+    <a th:if="${user.id == loggedInUser.id}" th:href="@{/users/{id}/edit(id=${user.id})}">[Edit Profile]</a>
+</div>
+<br>
+<p style="display: flex; justify-content: center" th:text="${user.profile.bio}"></p>
+
+<hr>
+<h3 th:if="${user.getPostsCount() != 0}">Posts :<br></h3>
+    <th:block th:each="post : ${user.getPosts()}">
+        <div class="post-item">
+            <div class="user-part-in-post-with-edit">
+                <div class="user-part-in-post">
+                    <img th:src="${post.author.profile.avatar}" class="avatar-in-feed" alt="flan's profile pic">
+                    <a th:href="@{/users/{id} (id = ${post.author.id})}" th:text="${post.author.username}"></a>
+                    · <a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}"></a>
+                </div>
+                <span th:if="${post.author.id == loggedInUser.id}">
+            <a th:href="@{/posts/{id}/edit(id=${post.id})}" >
+                <img alt="edit" class="feed-button" src="\uploads\icons\edit.png">
+            </a>
+        </span>
+            </div>
+            <div th:if="${post.content.length() < 200}">
+                <p th:text="${post.content}"></p>
+            </div>
+            <div th:unless="${post.content.length() < 200}">
+                <p>
+                    <span th:text="${post.content.substring(0,200)} + '...'" ></span>
+                    <a th:href="@{/posts/{id}(id=${post.id})}">Read More</a>
+                </p>
+            </div>
+            <div class="feed-video" th:if="${post.getClass().getName() == 'com.example.blog.dao.entities.VideoPost'}">
+                <video controls>
+                    <source th:src="@{${post.url}}">
+                </video>
+            </div>
+            <div class="reacts-n-cmnts-feed">
+                <a th:href="@{/posts/{id}(id=${post.id})}" class="rnc-count-feed">
+                    <img alt="reaction" class="feed-button" src="\uploads\icons\react.png">
+                    <span th:text="${post.reacts.size()}"></span> Reactions
+                </a>
+                <a th:href="@{/posts/{id}(id=${post.id})}" class="rnc-count-feed">
+                    <img alt="comment" class="feed-button" src="\uploads\icons\comment.png">
+                    <span th:text="${post.comments.size()}"></span> Comments
+                </a>
+            </div>
+        </div>
+        <br>
+    </th:block>
+<br><br>
+</body>
+</html>

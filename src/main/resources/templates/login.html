@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Login</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body class="container">
+
+<header>
+    <div class="header-left">
+        <a th:href="@{/posts}">Welcome to BlogNot</a>
+    </div>
+    <div class="header-right">
+        <a href="/register"><button class="btn"> Register </button></a>
+    </div>
+</header>
+
+<h1>Login</h1>
+
+<div th:if="${param.error}" style="color: red;">
+    Invalid username or password.
+    <br><br>
+</div>
+
+<div th:if="${param.logout}" style="color: green;">
+    You have been logged out successfully.
+    <br><br>
+</div>
+
+<form th:action="@{/login}" method="post">
+    <div>
+        <label for="username">Username :</label>
+        <input type="text" id="username" name="username" required />
+    </div><br><br>
+
+
+    <div>
+        <label for="password">Password :</label>
+        <input type="password" id="password" name="password" required />
+    </div>
+    <br>
+    <div style="display:flex; justify-content: space-between; align-items: center ">
+    <button class="green-button" type="submit">Sign In</button>
+    <a href="/register">Register Instead</a>
+    </div>
+</form>
+</body>
+</html>
